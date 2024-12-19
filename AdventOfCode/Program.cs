@@ -1,3 +1,4 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿using AdventOfCode.Days;
 
-Console.WriteLine("Hello, World!");
+var result = Day1.Part2("Input.txt");
+Console.WriteLine(result);
