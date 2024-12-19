@@ -33,8 +33,6 @@ public static class Day1
     public static long Part2(string input)
     {
         List<int> left = [];
-        List<int> right = [];
-
         var counter = new int[100000];
 
         using var file = File.OpenRead(input);
@@ -48,15 +46,13 @@ public static class Day1
             var rightVal = int.Parse(values[1]);
             
             left.Add(leftVal);
-            right.Add(rightVal);
-
             counter[rightVal]++;
         }
 
         long sum = 0;
         foreach (var t in left)
         {
-            sum += (t * counter[t]);
+            sum += t * counter[t];
         }
 
         return sum;
