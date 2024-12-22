@@ -13,7 +13,7 @@ public static class Day1
         {
             var line = reader.ReadLine();
             var values = line.Split("   ");
-    
+
             left.Add(int.Parse(values[0]));
             right.Add(int.Parse(values[1]));
         }
@@ -22,10 +22,7 @@ public static class Day1
         right.Sort();
 
         long sum = 0;
-        for (int i = 0; i < left.Count; i++)
-        {
-            sum += Math.Abs(left[i] - right[i]);
-        }
+        for (var i = 0; i < left.Count; i++) sum += Math.Abs(left[i] - right[i]);
 
         return sum;
     }
@@ -41,19 +38,16 @@ public static class Day1
         {
             var line = reader.ReadLine();
             var values = line.Split("   ");
-            
+
             var leftVal = int.Parse(values[0]);
             var rightVal = int.Parse(values[1]);
-            
+
             left.Add(leftVal);
             counter[rightVal]++;
         }
 
         long sum = 0;
-        foreach (var t in left)
-        {
-            sum += t * counter[t];
-        }
+        foreach (var t in left) sum += t * counter[t];
 
         return sum;
     }
