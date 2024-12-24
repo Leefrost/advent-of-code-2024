@@ -1,4 +1,4 @@
 ﻿using AdventOfCode.Days;
 
-var result = Day2.Part2("Input.txt");
+var result = Day3.Part("Input.txt");
 Console.WriteLine(result); 
