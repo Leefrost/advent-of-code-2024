@@ -1,4 +1,9 @@
 ﻿using AdventOfCode.Days;
 
-var result = Day5.Part2("Input.txt");
+var source = "Input.txt";
+#if DEBUG
+    source = "Sample.txt";
+#endif
+
+var result = Day6.Part2(source);
 Console.WriteLine(result);
