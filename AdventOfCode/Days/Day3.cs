@@ -23,28 +23,35 @@ public static class Day3
         return task2;
     }
 
-    private static int SumProducts(this IEnumerable<Instruction> instructions) =>
-        instructions.Aggregate(
+    private static int SumProducts(this IEnumerable<Instruction> instructions)
+    {
+        return instructions.Aggregate(
             (sum: 0, include: true),
             (acc, instruction) => instruction switch
             {
-                Pause => (sum: acc.sum, include: false),
-                Resume => (sum: acc.sum, include: true),
-                Multiply mul when acc.include => (sum: acc.sum + mul.A * mul.B, include: acc.include),
+                Pause => (acc.sum, include: false),
+                Resume => (acc.sum, include: true),
+                Multiply mul when acc.include => (sum: acc.sum + mul.A * mul.B, acc.include),
                 _ => acc
             }).sum;
-    
-    private static IEnumerable<Instruction> Parse(this string text) =>
-        Regex.Matches(text, @"(?<mul>mul)\((?<a>\d+),(?<b>\d+)\)|(?<dont>don't)\(\)|(?<do>do)\(\)")
+    }
+
+    private static IEnumerable<Instruction> Parse(this string text)
+    {
+        return Regex.Matches(text, @"(?<mul>mul)\((?<a>\d+),(?<b>\d+)\)|(?<dont>don't)\(\)|(?<do>do)\(\)")
             .Select(match => match switch
             {
-                _ when match.Groups["dont"].Success => (Instruction)new Pause(),
+                _ when match.Groups["dont"].Success => new Pause(),
                 _ when match.Groups["do"].Success => (Instruction)new Resume(),
                 _ => new Multiply(int.Parse(match.Groups["a"].Value), int.Parse(match.Groups["b"].Value))
             });
+    }
 }
 
-abstract record Instruction;
-record Multiply(int A, int B): Instruction;
-record Pause:Instruction;
-record Resume: Instruction;
+internal abstract record Instruction;
+
+internal record Multiply(int A, int B) : Instruction;
+
+internal record Pause : Instruction;
+
+internal record Resume : Instruction;

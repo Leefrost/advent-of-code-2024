@@ -10,7 +10,7 @@ public static class Day6
     private const char W = 'W';
     private const char N = 'N';
     private const char S = 'S';
-    
+
     public static int Part1(string input)
     {
         var grid = File.ReadAllLines(input)
@@ -19,7 +19,7 @@ public static class Day6
         var visited = new HashSet<(int x, int y)>();
         var start = grid.StartAt();
         visited.Add(start);
-        
+
         var direction = N;
         var current = start;
         while (true)
@@ -28,7 +28,9 @@ public static class Day6
             if (!grid.IsOutOfBounce(next))
                 break;
             if (grid[next.row][next.col] == '#')
+            {
                 direction = direction.Rotate();
+            }
             else
             {
                 current = next;
@@ -38,7 +40,7 @@ public static class Day6
 
         return visited.Count;
     }
-    
+
     public static int Part2(string input)
     {
         var grid = File.ReadAllLines(input)
@@ -47,7 +49,7 @@ public static class Day6
         var visited = new HashSet<(int x, int y)>();
         var start = grid.StartAt();
         visited.Add(start);
-        
+
         var direction = N;
         var current = start;
         while (true)
@@ -56,7 +58,9 @@ public static class Day6
             if (!grid.IsOutOfBounce(next))
                 break;
             if (grid[next.row][next.col] == '#')
+            {
                 direction = direction.Rotate();
+            }
             else
             {
                 current = next;
@@ -67,16 +71,16 @@ public static class Day6
         var blocked = new HashSet<(int x, int y)>();
         foreach (var visit in visited)
         {
-            if(visit == start) 
+            if (visit == start)
                 continue;
-            
+
             if (grid.SubGrid(visit).HasLoop(start))
                 blocked.Add(visit);
         }
-        
+
         return blocked.Count;
     }
-    
+
     private static char Rotate(this char direction)
     {
         return direction switch
@@ -102,7 +106,7 @@ public static class Day6
 
     private static bool IsOutOfBounce(this char[][] grid, (int row, int col) point)
     {
-        return point.row >= 0 && point.row < grid.Length 
+        return point.row >= 0 && point.row < grid.Length
                               && point.col >= 0 && point.col < grid[0].Length;
     }
 
@@ -119,12 +123,14 @@ public static class Day6
         while (true)
         {
             var next = point.MoveTo(direction);
-            if(!grid.IsOutOfBounce(next))
+            if (!grid.IsOutOfBounce(next))
                 return false;
             if (grid[next.row][next.col] == direction)
                 return true;
             if (grid[next.row][next.col] == '#')
+            {
                 direction = direction.Rotate();
+            }
             else
             {
                 point = next;
@@ -132,7 +138,7 @@ public static class Day6
             }
         }
     }
-    
+
     private static (int row, int col) StartAt(this char[][] grid)
     {
         for (var row = 0; row < grid.Length; row++)

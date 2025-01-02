@@ -5,8 +5,8 @@ public static class Day5
     private static readonly Dictionary<int, List<int>> Rules = [];
     private static readonly List<int[]> Input = [];
 
-    private static readonly Comparer<int>? TopComparer = 
-        Comparer<int>.Create((start,end) => Rules[end].Contains(start) ? 1: -1);
+    private static readonly Comparer<int>? TopComparer =
+        Comparer<int>.Create((start, end) => Rules[end].Contains(start) ? 1 : -1);
 
     public static int Part1(string input)
     {
@@ -37,7 +37,7 @@ public static class Day5
             .Where(IsOrderCorrect)
             .Sum(row => row[row.Length / 2]);
     }
-    
+
     public static int Part2(string input)
     {
         using var file = File.OpenRead(input);
@@ -69,6 +69,8 @@ public static class Day5
             .Sum(row => row[row.Length / 2]);
     }
 
-    private static bool IsOrderCorrect(int[] row) => 
-        row.Zip(row.Skip(1), (start, end) => !Rules[end].Contains(start)).All(s => s);
+    private static bool IsOrderCorrect(int[] row)
+    {
+        return row.Zip(row.Skip(1), (start, end) => !Rules[end].Contains(start)).All(s => s);
+    }
 }

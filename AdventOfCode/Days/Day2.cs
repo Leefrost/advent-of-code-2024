@@ -54,17 +54,25 @@ public static class Day2
         return total;
     }
 
-    private static IEnumerable<List<int>> Expand(this List<int> values) => 
-        new[] { values }.Concat(Enumerable.Range(0, values.Count).Select(values.ExceptAt));
+    private static IEnumerable<List<int>> Expand(this List<int> values)
+    {
+        return new[] { values }.Concat(Enumerable.Range(0, values.Count).Select(values.ExceptAt));
+    }
 
-    private static List<int> ExceptAt(this List<int> values, int index) => 
-        values.Take(index).Concat(values.Skip(index + 1)).ToList();
+    private static List<int> ExceptAt(this List<int> values, int index)
+    {
+        return values.Take(index).Concat(values.Skip(index + 1)).ToList();
+    }
 
-    private static bool IsSafe(List<int> values) => 
-        values.Count < 2 || values.IsSafe(Math.Sign(values[1] - values[0]));
+    private static bool IsSafe(List<int> values)
+    {
+        return values.Count < 2 || values.IsSafe(Math.Sign(values[1] - values[0]));
+    }
 
-    private static bool IsSafe(this List<int> values, int diffSign) => 
-        values.Pairs().All(pair => pair.IsSave(diffSign));
+    private static bool IsSafe(this List<int> values, int diffSign)
+    {
+        return values.Pairs().All(pair => pair.IsSave(diffSign));
+    }
 
     private static IEnumerable<(int prev, int next)> Pairs(this IEnumerable<int> pairs)
     {
@@ -79,8 +87,10 @@ public static class Day2
         }
     }
 
-    private static bool IsSave(this (int prev, int next) pair, int diffSign) =>
-        Math.Abs(pair.next - pair.prev) >= 1 &&
-        Math.Abs(pair.next - pair.prev) <= 3 &&
-        Math.Sign(pair.next - pair.prev) == diffSign;
+    private static bool IsSave(this (int prev, int next) pair, int diffSign)
+    {
+        return Math.Abs(pair.next - pair.prev) >= 1 &&
+               Math.Abs(pair.next - pair.prev) <= 3 &&
+               Math.Sign(pair.next - pair.prev) == diffSign;
+    }
 }
