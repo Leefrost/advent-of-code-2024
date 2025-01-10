@@ -4,23 +4,21 @@ namespace AdventOfCode.Days;
 
 public static class Day16
 {
-    private record Node(int Location, int Direction, int Distance);
-    
     private const char Border = '#';
     private const char Start = 'S';
     private const char End = 'E';
 
     private const int Forward = 1;
     private const int Rotate = 1000;
-    
+
     public static int Part1(string input)
     {
         var lines = File.ReadLines(input)
             .Select(line => line).ToList();
-        
-        var map = new Map2<char>(data: [.. lines.SelectMany(line => line)], columns: lines.First().Length);
+
+        var map = new Map2<char>([.. lines.SelectMany(line => line)], lines.First().Length);
         var buffer = new int[map.Data.Length * map.Directions.Length];
-        
+
         var end = Array.IndexOf(map.Data, End);
         DistanceToEnd(map, Array.IndexOf(map.Data, Start), end, buffer);
 
@@ -32,10 +30,10 @@ public static class Day16
     {
         var lines = File.ReadLines(input)
             .Select(line => line).ToList();
-        
-        var map = new Map2<char>(data: [.. lines.SelectMany(line => line)], columns: lines.First().Length);
+
+        var map = new Map2<char>([.. lines.SelectMany(line => line)], lines.First().Length);
         var buffer = new int[map.Data.Length * map.Directions.Length];
-        
+
         var start = Array.IndexOf(map.Data, Start);
         var end = Array.IndexOf(map.Data, End);
 
@@ -51,24 +49,24 @@ public static class Day16
             .Count();
         return result;
     }
-    
+
     private static void VisitPlaces(Map2<char> map, int[] distances, int current, int end, HashSet<int> visited)
     {
-        if (visited.Contains(current) | current == end)
+        if (visited.Contains(current) | (current == end))
             return;
 
         visited.Add(current);
-        var (location, direction) = map.LD2L(current);        
+        var (location, direction) = map.LD2L(current);
 
-        var forward = new[] 
+        var forward = new[]
         {
             Mod(direction + 2, map.Directions.Length)
         };
 
-        var rotations = new int[]
+        var rotations = new[]
         {
             Mod(direction + 1, map.Directions.Length),
-            Mod(direction + 3, map.Directions.Length),
+            Mod(direction + 3, map.Directions.Length)
         };
 
         rotations.Select(d => map.L2LD(location, d))
@@ -126,22 +124,24 @@ public static class Day16
         var directions = Enumerable
             .Range(0, map.Directions.Length)
             .ToArray();
-        
+
         var min = directions.Min(ld => distances[endUp + ld]);
         return directions
             .Where(ld => distances[endUp + ld] == min)
             .Select(ld => ld + endUp)
             .ToArray();
     }
-    
+
     private static void Each<T>(this IEnumerable<T> source, Action<T> action)
     {
         foreach (var item in source)
             action(item);
     }
-    
+
     private static int Mod(int n, int m)
     {
         return (n % m + m) % m;
     }
+
+    private record Node(int Location, int Direction, int Distance);
 }

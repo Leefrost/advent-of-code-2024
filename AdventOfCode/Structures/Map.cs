@@ -35,18 +35,32 @@ public class Map2<T> : IEnumerable<T>
 
     public int[] Directions { get; }
 
+    public IEnumerator<T> GetEnumerator()
+    {
+        return Data.AsEnumerable().GetEnumerator();
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return Data.GetEnumerator();
+    }
+
     public int InvDdx(int ddx)
-        => (ddx + 2) % Directions.Length;
+    {
+        return (ddx + 2) % Directions.Length;
+    }
 
     public int Next(int location, int ddx)
-        => location + Directions[ddx];
+    {
+        return location + Directions[ddx];
+    }
 
     public void FillBorders(T value)
     {
-        for (int x = 0; x < Columns; x++)
+        for (var x = 0; x < Columns; x++)
             this[x, 0] = this[x, Rows - 1] = value;
 
-        for (int y = 0; y < Rows; y++)
+        for (var y = 0; y < Rows; y++)
             this[0, y] = this[Columns - 1, y] = value;
     }
 
@@ -62,16 +76,16 @@ public class Map2<T> : IEnumerable<T>
         var buffer = new T[Data.Length];
         Array.Copy(Data, buffer, Data.Length);
 
-        return new(buffer, Columns);
+        return new Map2<T>(buffer, Columns);
     }
 
     public void Draw(Func<T, int, string>? formatter = null)
     {
         var f = formatter ?? DefaultFormat;
 
-        for (int i = 0; i < Data.Length; i += Columns)
+        for (var i = 0; i < Data.Length; i += Columns)
         {
-            for (int k = i; k < i + Columns; k++)
+            for (var k = i; k < i + Columns; k++)
                 Console.Write(f(Data[k], k));
 
             Console.WriteLine();
@@ -79,16 +93,24 @@ public class Map2<T> : IEnumerable<T>
     }
 
     public (int location, int direction) LD2L(int ld)
-        => (ld / Directions.Length, ld % Directions.Length);
+    {
+        return (ld / Directions.Length, ld % Directions.Length);
+    }
 
     public int L2LD(int location, int direction)
-        => Directions.Length * location + direction;
+    {
+        return Directions.Length * location + direction;
+    }
 
     public int D2toD1(int x, int y)
-        => y * Columns + x;
+    {
+        return y * Columns + x;
+    }
 
     public (int x, int y) D1toD2(int loc)
-        => (loc % Columns, loc / Columns);
+    {
+        return (loc % Columns, loc / Columns);
+    }
 
     public int Manhattan(int from, int to)
     {
@@ -98,14 +120,10 @@ public class Map2<T> : IEnumerable<T>
         return Math.Abs(cx - ex) + Math.Abs(cy - ey);
     }
 
-    public IEnumerator<T> GetEnumerator()
-        => Data.AsEnumerable().GetEnumerator();
-
-    IEnumerator IEnumerable.GetEnumerator()
-        => Data.GetEnumerator();
-
     public static Map2<T> Empty(int columns, int rows)
-        => new(new T[rows * columns], columns);
+    {
+        return new Map2<T>(new T[rows * columns], columns);
+    }
 
     public static Map2<T> WithBorders(T[] data, int columns, T borderValue)
     {
@@ -114,9 +132,9 @@ public class Map2<T> : IEnumerable<T>
         var map = Empty(columns + 2, rows + 2);
         map.FillBorders(borderValue);
 
-        for (int y = 0; y < rows; y++)
-            for (int x = 0; x < columns; x++)
-                map[x + 1, y + 1] = data[y * columns + x];
+        for (var y = 0; y < rows; y++)
+        for (var x = 0; x < columns; x++)
+            map[x + 1, y + 1] = data[y * columns + x];
 
         return map;
     }
@@ -124,7 +142,9 @@ public class Map2<T> : IEnumerable<T>
     #region Private methods
 
     private string DefaultFormat(T value, int location)
-        => value?.ToString() ?? String.Empty;
+    {
+        return value?.ToString() ?? string.Empty;
+    }
 
     #endregion
 }

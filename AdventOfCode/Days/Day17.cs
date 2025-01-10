@@ -4,31 +4,16 @@ namespace AdventOfCode.Days;
 
 public static class Day17
 {
-    private static readonly Regex NumRegex = new(@"\d+");
-
     private const int A = 0;
     private const int B = 1;
     private const int C = 2;
-    
-    private delegate void Instruction(long a, long b, ref long output);
-
-    private enum Code
-    {
-        ADV = 0,
-        BXL = 1,
-        BST = 2,
-        JNZ = 3,
-        BXC = 4,
-        OUT = 5,
-        BDV = 6,
-        CDV = 7
-    }
+    private static readonly Regex NumRegex = new(@"\d+");
 
     public static string Part1(string input)
     {
         const int programIndex = 4;
         const int numberOfRegisters = 3;
-        
+
         var lines = File.ReadAllLines(input);
 
         var data = Enumerable.Range(0, numberOfRegisters)
@@ -50,19 +35,19 @@ public static class Day17
     {
         const int programIndex = 4;
         const int numberOfRegisters = 3;
-        
+
         var lines = File.ReadAllLines(input);
 
         var program = NumRegex.Matches(lines[programIndex])
             .Select(m => Convert.ToByte(m.Value))
             .ToArray();
-        
+
         var a = 0L;
         while (true)
-        {            
+        {
             var output = Run([a, 0, 0], program);
             var match = program.TakeLast(output.Length)
-                .Zip(output, (p, ot) => p == ot)                
+                .Zip(output, (p, ot) => p == ot)
                 .All(b => b);
 
             if (match && output.Length == program.Length)
@@ -139,5 +124,19 @@ public static class Day17
     private static long Combo(long[] r, int n)
     {
         return n >= 4 ? r[n - 4] : n;
+    }
+
+    private delegate void Instruction(long a, long b, ref long output);
+
+    private enum Code
+    {
+        ADV = 0,
+        BXL = 1,
+        BST = 2,
+        JNZ = 3,
+        BXC = 4,
+        OUT = 5,
+        BDV = 6,
+        CDV = 7
     }
 }

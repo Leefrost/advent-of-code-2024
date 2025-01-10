@@ -15,23 +15,22 @@ public static class Day15
     public static int Part1(string input)
     {
         var lines = File.ReadLines(input).ToList();
-        
+
         var sx = lines.First().Length;
         var map = new Map2<char>(
-            data:
             [
                 ..lines
                     .TakeWhile(line => line.Length > 0 && line.First() == Border)
                     .SelectMany(line => line)
             ],
-            columns: sx
+            sx
         );
 
         var path = lines.Skip(map.Rows)
             .SkipWhile(line => line.Length == 0)
             .SelectMany(line => line.Select(Ch2D))
             .ToArray();
-        
+
         var result = SumOfGps(map.Copy(), Box, path);
         return result;
     }
@@ -39,23 +38,22 @@ public static class Day15
     public static int Part2(string input)
     {
         var lines = File.ReadLines(input).ToList();
-        
+
         var sx = lines.First().Length;
         var map = new Map2<char>(
-            data:
             [
                 ..lines
                     .TakeWhile(line => line.Length > 0 && line.First() == Border)
                     .SelectMany(line => line)
             ],
-            columns: sx
+            sx
         );
 
         var path = lines.Skip(map.Rows)
             .SkipWhile(line => line.Length == 0)
             .SelectMany(line => line.Select(Ch2D))
             .ToArray();
-        
+
         var wideMap = new Map2<char>(map.SelectMany(WideChar).ToArray(), 2 * map.Columns);
         var result = SumOfGps(wideMap.Copy(), BoxLeft, path);
         return result;
@@ -70,7 +68,7 @@ public static class Day15
             .Where(c => c.d == target)
             .Sum(c => Distance(map, c.i));
     }
-    
+
     private static void Each<T>(this IEnumerable<T> source, Action<T> action)
     {
         foreach (var item in source)
@@ -97,8 +95,9 @@ public static class Day15
             Border => false,
             Empty => true,
             BoxLeft => CanMove(map, next, ddx, visited) &&
-                    CanMove(map, map.Next(location, Map2<char>.RIGHT), ddx, visited),
-            BoxRight => CanMove(map, next, ddx, visited) && CanMove(map, map.Next(location, Map2<char>.LEFT), ddx, visited),
+                       CanMove(map, map.Next(location, Map2<char>.RIGHT), ddx, visited),
+            BoxRight => CanMove(map, next, ddx, visited) &&
+                        CanMove(map, map.Next(location, Map2<char>.LEFT), ddx, visited),
             _ => CanMove(map, next, ddx, visited)
         };
     }
@@ -129,7 +128,7 @@ public static class Day15
 
         (map[next], map[location]) = (map[location], map[next]);
     }
-    
+
     private static IEnumerable<char> WideChar(char symbol)
     {
         return symbol switch

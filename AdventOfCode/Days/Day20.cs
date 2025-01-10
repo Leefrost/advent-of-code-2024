@@ -10,15 +10,15 @@ public static class Day20
     private const char BORDER = '@';
     private const char OBSTRUCTION = '#';
     private const char EMPTY = '.';
-    
+
     public static int Part1(string input)
     {
         var lines = File.ReadAllLines(input);
         var data = lines.SelectMany(line => line).ToArray();
         var col = lines.First().Length;
-        
+
         var map = Map2<char>.WithBorders(data, col, BORDER);
-        
+
         var result = Solve(map, 2, 100);
         return result;
     }
@@ -28,13 +28,13 @@ public static class Day20
         var lines = File.ReadAllLines(input);
         var data = lines.SelectMany(line => line).ToArray();
         var col = lines.First().Length;
-        
+
         var map = Map2<char>.WithBorders(data, col, BORDER);
-        
+
         var result = Solve(map, 20, 100);
         return result;
     }
-    
+
     private static int Solve(Map2<char> map, int depth, int minDistance)
     {
         var bfs = new BFS<char>(map, [OBSTRUCTION, BORDER]);
@@ -52,8 +52,9 @@ public static class Day20
                 .Select(jmp => te[end] - (te[cell.i] + ts[jmp.loc] + jmp.dist))
                 .Count(dst => dst >= minDistance));
     }
-    
-    private static IEnumerable<(int loc, int dist)> GetCheatCells(Map2<char> map, int loc, int depth, HashSet<int> visited)
+
+    private static IEnumerable<(int loc, int dist)> GetCheatCells(Map2<char> map, int loc, int depth,
+        HashSet<int> visited)
     {
         var queue = new Queue<(int loc, int d)>();
         queue.Enqueue((loc, 0));
