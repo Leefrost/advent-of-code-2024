@@ -5,5 +5,5 @@ var source = "Input.txt";
     source = "Sample.txt";
 #endif
 
-var result = Day24.Part2(source);
+var result = Day25.Part1(source);
 Console.WriteLine(result);
