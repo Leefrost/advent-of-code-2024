@@ -1,11 +1,10 @@
 ﻿using System.Text.RegularExpressions;
+using AdventOfCode.Structures;
 
 namespace AdventOfCode.Days;
 
 public static class Day24
 {
-    private enum Op { AND, OR, XOR };
-    private record Rule(Op Op, string In1, string In2, string Out);
     private static Rule[] _rules = [];
     private static readonly Dictionary<string, bool> _values = [];
 
@@ -13,11 +12,11 @@ public static class Day24
 
     private static readonly Regex OpRegex =
         new(@"(?<in1>\S*)\s+(?<op>\S*)\s+(?<in2>\S*)\s+->\s+(?<out>\S*)", RegexOptions.Compiled);
-    
+
     public static string Part1(string input)
     {
         var lines = File.ReadAllText(input);
-        
+
         _values.Clear();
 
         ValueRegex.Matches(lines)
@@ -27,10 +26,10 @@ public static class Day24
         _rules = OpRegex.Matches(lines)
             .Select(m => new Rule
             (
-                Op: Enum.Parse<Op>(m.Groups["op"].Value),
-                In1: m.Groups["in1"].Value,
-                In2: m.Groups["in2"].Value,
-                Out: m.Groups["out"].Value
+                Enum.Parse<Op>(m.Groups["op"].Value),
+                m.Groups["in1"].Value,
+                m.Groups["in2"].Value,
+                m.Groups["out"].Value
             )).ToArray();
 
         var result = Run([]).ToString();
@@ -40,7 +39,7 @@ public static class Day24
     public static string Part2(string input)
     {
         var lines = File.ReadAllText(input);
-        
+
         _values.Clear();
 
         ValueRegex.Matches(lines)
@@ -50,22 +49,16 @@ public static class Day24
         _rules = OpRegex.Matches(lines)
             .Select(m => new Rule
             (
-                Op: Enum.Parse<Op>(m.Groups["op"].Value),
-                In1: m.Groups["in1"].Value,
-                In2: m.Groups["in2"].Value,
-                Out: m.Groups["out"].Value
+                Enum.Parse<Op>(m.Groups["op"].Value),
+                m.Groups["in1"].Value,
+                m.Groups["in2"].Value,
+                m.Groups["out"].Value
             )).ToArray();
-        
+
         var result = string.Join(",", GenerateSwaps([]).Keys.Distinct().Order());
         return result;
     }
-    
-    private static void Each<T>(this IEnumerable<T> source, Action<T> action)
-    {
-        foreach (var item in source)
-            action(item);
-    }
-    
+
     private static Dictionary<string, string> GenerateSwaps(Dictionary<string, string> swaps)
     {
         var count = Convert.ToInt32(_values.Keys
@@ -74,7 +67,7 @@ public static class Day24
             .Last()[1..]);
 
         var co = GetOut(swaps, "x00", "y00", Op.AND);
-        for (int i = 1; i <= count; i++)
+        for (var i = 1; i <= count; i++)
         {
             void Swap(string a, string b)
             {
@@ -111,9 +104,13 @@ public static class Day24
     }
 
     private static string? GetOut(Dictionary<string, string> swaps, string? in1, string? in2, Op op)
-        => ApplySwaps(swaps, GetOut(in1, in2, op) ?? GetOut(in2, in1, op));
+    {
+        return ApplySwaps(swaps, GetOut(in1, in2, op) ?? GetOut(in2, in1, op));
+    }
     private static string? GetOut(string? in1, string? in2, Op op)
-        => _rules.Where(r => r.In1 == in1 && r.In2 == in2 && r.Op == op).FirstOrDefault()?.Out;
+    {
+        return _rules.Where(r => r.In1 == in1 && r.In2 == in2 && r.Op == op).FirstOrDefault()?.Out;
+    }
 
     private static ulong Run(Dictionary<string, string> swaps)
     {
@@ -128,8 +125,8 @@ public static class Day24
                 var @out = ApplySwaps(swaps, rule.Out)!;
 
                 if (!memory.ContainsKey(@out) &&
-                    memory.TryGetValue(rule.In1, out bool in1) &&
-                    memory.TryGetValue(rule.In2, out bool in2))
+                    memory.TryGetValue(rule.In1, out var in1) &&
+                    memory.TryGetValue(rule.In2, out var in2))
                 {
                     memory.Add(@out, Calculate(in1, in2, rule.Op));
                     changed = true;
@@ -143,22 +140,35 @@ public static class Day24
     }
 
     private static string? ApplySwaps(Dictionary<string, string> swaps, string? @out)
-        => @out is not null && swaps.TryGetValue(@out, out var result) ? result : @out;
-
-    private static bool Calculate(bool a, bool b, Op op) => op switch
     {
-        Op.AND => a & b,
-        Op.OR => a | b,
-        Op.XOR => a ^ b,
+        return @out is not null && swaps.TryGetValue(@out, out var result) ? result : @out;
+    }
 
-        _ => throw new NotImplementedException(),
-    };
+    private static bool Calculate(bool a, bool b, Op op)
+    {
+        return op switch
+        {
+            Op.AND => a & b,
+            Op.OR => a | b,
+            Op.XOR => a ^ b,
+
+            _ => throw new NotImplementedException()
+        };
+    }
 
     private static ulong BitArray2UInt64(IEnumerable<bool> arr)
-        => arr.Select((d, i) => (d, i)).Where(b => b.d).Aggregate(0UL, (acc, b) => acc |= 1UL << b.i);
+    {
+        return arr.Select((d, i) => (d, i)).Where(b => b.d).Aggregate(0UL, (acc, b) => acc |= 1UL << b.i);
+    }
 
     private static ulong GetNum(Dictionary<string, bool> memory, char num)
-        => BitArray2UInt64(memory.Where(kv => kv.Key.StartsWith(num))
+    {
+        return BitArray2UInt64(memory.Where(kv => kv.Key.StartsWith(num))
             .OrderBy(kv => kv.Key)
             .Select(kv => kv.Value));
+    }
+
+    private enum Op { AND, OR, XOR }
+
+    private record Rule(Op Op, string In1, string In2, string Out);
 }

@@ -7,11 +7,9 @@ public static class Day1
         List<int> left = [];
         List<int> right = [];
 
-        using var file = File.OpenRead(input);
-        using var reader = new StreamReader(file);
-        while (!reader.EndOfStream)
+        var lines = File.ReadAllLines(input);
+        foreach (var line in lines)
         {
-            var line = reader.ReadLine();
             var values = line.Split("   ");
 
             left.Add(int.Parse(values[0]));
@@ -22,7 +20,8 @@ public static class Day1
         right.Sort();
 
         long sum = 0;
-        for (var i = 0; i < left.Count; i++) sum += Math.Abs(left[i] - right[i]);
+        for (var i = 0; i < left.Count; i++)
+            sum += Math.Abs(left[i] - right[i]);
 
         return sum;
     }
@@ -32,11 +31,9 @@ public static class Day1
         List<int> left = [];
         var counter = new int[100000];
 
-        using var file = File.OpenRead(input);
-        using var reader = new StreamReader(file);
-        while (!reader.EndOfStream)
+        var lines = File.ReadAllLines(input);
+        foreach (var line in lines)
         {
-            var line = reader.ReadLine();
             var values = line.Split("   ");
 
             var leftVal = int.Parse(values[0]);
@@ -46,9 +43,7 @@ public static class Day1
             counter[rightVal]++;
         }
 
-        long sum = 0;
-        foreach (var t in left) sum += t * counter[t];
-
-        return sum;
+        var result = left.Aggregate<int, long>(0, (current, t) => current + t * counter[t]);
+        return result;
     }
 }

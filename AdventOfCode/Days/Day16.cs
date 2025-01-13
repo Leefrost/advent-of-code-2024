@@ -52,7 +52,7 @@ public static class Day16
 
     private static void VisitPlaces(Map2<char> map, int[] distances, int current, int end, HashSet<int> visited)
     {
-        if (visited.Contains(current) | (current == end))
+        if (visited.Contains(current) | current == end)
             return;
 
         visited.Add(current);
@@ -132,11 +132,7 @@ public static class Day16
             .ToArray();
     }
 
-    private static void Each<T>(this IEnumerable<T> source, Action<T> action)
-    {
-        foreach (var item in source)
-            action(item);
-    }
+
 
     private static int Mod(int n, int m)
     {

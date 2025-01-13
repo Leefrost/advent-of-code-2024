@@ -69,12 +69,6 @@ public static class Day15
             .Sum(c => Distance(map, c.i));
     }
 
-    private static void Each<T>(this IEnumerable<T> source, Action<T> action)
-    {
-        foreach (var item in source)
-            action(item);
-    }
-
     private static int TryMove(Map2<char> map, int location, int ddx)
     {
         var next = map.Next(location, ddx);

@@ -17,10 +17,10 @@ public static class Day21
     public static string Part1(string input)
     {
         var lines = File.ReadAllLines(input);
-        
+
         _keyboard = Map2<char>.WithBorders(['7', '8', '9', '4', '5', '6', '1', '2', '3', Gap, '0', Enter], 3, Gap);
         _robotKeyboard = Map2<char>.WithBorders([Gap, '^', Enter, '<', 'v', '>'], 3, Gap);
-        
+
         var result = Solve(2, lines);
         return result;
     }
@@ -28,26 +28,30 @@ public static class Day21
     public static string Part2(string input)
     {
         var lines = File.ReadAllLines(input);
-        
+
         _keyboard = Map2<char>.WithBorders(['7', '8', '9', '4', '5', '6', '1', '2', '3', Gap, '0', Enter], 3, Gap);
         _robotKeyboard = Map2<char>.WithBorders([Gap, '^', Enter, '<', 'v', '>'], 3, Gap);
-        
+
         var result = Solve(25, lines);
         return result;
     }
-    
+
     private static string Solve(int depth, IEnumerable<string> instructions)
     {
         Cache.Clear();
         return instructions.BigSum(code => SolveNumeric(code, depth)).ToString();
     }
-    
+
     private static ulong BigSum<T>(this IEnumerable<T> source, Func<T, ulong> func)
-        => source.Aggregate(0UL, (acc, n) => acc + func(n));
+    {
+        return source.Aggregate(0UL, (acc, n) => acc + func(n));
+    }
 
     private static ulong SolveNumeric(string code, int depth)
-        => Convert.ToUInt64(code[..^1]) * AssembleSequence(_keyboard, code)
+    {
+        return Convert.ToUInt64(code[..^1]) * AssembleSequence(_keyboard, code)
             .BigSum(ins => SolveDirectional(ins, depth));
+    }
 
     private static ulong SolveDirectional(string code, int depth)
     {
@@ -62,14 +66,14 @@ public static class Day21
         return Cache.AddAndReturn(tuple, AssembleSequence(_robotKeyboard, code)
             .BigSum(ins => SolveDirectional(ins, depth - 1)));
     }
-    
+
     private static TValue AddAndReturn<TKey, TValue>(this Dictionary<TKey, TValue> source, TKey key, TValue value)
         where TKey : notnull
     {
-        source.Add(key, value); 
+        source.Add(key, value);
         return value;
     }
-    
+
     private static IEnumerable<string> AssembleSequence(Map2<char> keyboard, string code)
     {
         var location = Array.IndexOf(keyboard.Data, Enter);
@@ -90,7 +94,7 @@ public static class Day21
     }
 
     private static string GetInstructions(Map2<char> keyboard, int start, int end)
-    {        
+    {
         var distances = Bfs(keyboard, start, end, DistanceBuffer);
 
         PathBuffer.Clear();
@@ -111,7 +115,7 @@ public static class Day21
     {
         var possibility = true;
 
-        for (int i = 0; possibility && i < path.Length; i++)
+        for (var i = 0; possibility && i < path.Length; i++)
         {
             location = keyboard.Next(location, path[i]);
             possibility &= keyboard[location] != Gap;
@@ -167,30 +171,30 @@ public static class Day21
 
         return distances;
     }
-    
-    private static void Each<T>(this IEnumerable<T> source, Action<T> action)
+
+    private static int Ddx2W(int ddx)
     {
-        foreach (var item in source)
-            action(item);
+        return ddx switch
+        {
+            0 => 2,
+            1 => 4,
+            2 => 3,
+            3 => 1,
+
+            _ => throw new NotImplementedException()
+        };
     }
 
-    private static int Ddx2W(int ddx) => ddx switch
+    private static char Ddx2C(int dir)
     {
-        0 => 2,
-        1 => 4,
-        2 => 3,
-        3 => 1,
+        return dir switch
+        {
+            0 => '^',
+            1 => '>',
+            2 => 'v',
+            3 => '<',
 
-        _ => throw new NotImplementedException()
-    };
-
-    private static char Ddx2C(int dir) => dir switch
-    {
-        0 => '^',
-        1 => '>',
-        2 => 'v',
-        3 => '<',
-
-        _ => throw new NotImplementedException()
-    };
-}   
+            _ => throw new NotImplementedException()
+        };
+    }
+}
