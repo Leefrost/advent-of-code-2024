@@ -5,11 +5,9 @@ public static class Day2
     public static int Part1(string input)
     {
         var sum = 0;
-        using var file = File.OpenRead(input);
-        using var reader = new StreamReader(file);
-        while (!reader.EndOfStream)
+        var lines = File.ReadAllLines(input);
+        foreach (var line in lines)
         {
-            var line = reader.ReadLine();
             var values = line.Split(" ").Select(int.Parse).ToArray();
 
             if (IsSafe(values))
@@ -18,7 +16,22 @@ public static class Day2
 
         return sum;
     }
+    
+    public static int Part2(string input)
+    {
+        var list = new List<List<int>>();
+        
+        var lines = File.ReadAllLines(input);
+        foreach (var line in lines)
+        {
+            var values = line!.Split(" ").Select(int.Parse).ToList();
+            list.Add(values);
+        }
 
+        var total = list.Count(items => items.Expand().Any(IsSafe));
+        return total;
+    }
+    
     private static bool IsSafe(int[] values)
     {
         var direction = values[1] - values[0] > 0;
@@ -38,41 +51,17 @@ public static class Day2
         return true;
     }
 
-    public static int Part2(string input)
-    {
-        var list = new List<List<int>>();
-        using var file = File.OpenRead(input);
-        using var reader = new StreamReader(file);
-        while (!reader.EndOfStream)
-        {
-            var line = reader.ReadLine();
-            var values = line!.Split(" ").Select(int.Parse).ToList();
-            list.Add(values);
-        }
-
-        var total = list.Count(items => items.Expand().Any(IsSafe));
-        return total;
-    }
-
     private static IEnumerable<List<int>> Expand(this List<int> values)
-    {
-        return new[] { values }.Concat(Enumerable.Range(0, values.Count).Select(values.ExceptAt));
-    }
+        => new[] { values }.Concat(Enumerable.Range(0, values.Count).Select(values.ExceptAt));
 
     private static List<int> ExceptAt(this List<int> values, int index)
-    {
-        return values.Take(index).Concat(values.Skip(index + 1)).ToList();
-    }
+        => values.Take(index).Concat(values.Skip(index + 1)).ToList();
 
     private static bool IsSafe(List<int> values)
-    {
-        return values.Count < 2 || values.IsSafe(Math.Sign(values[1] - values[0]));
-    }
+        => values.Count < 2 || values.IsSafe(Math.Sign(values[1] - values[0]));
 
     private static bool IsSafe(this List<int> values, int diffSign)
-    {
-        return values.Pairs().All(pair => pair.IsSave(diffSign));
-    }
+        => values.Pairs().All(pair => pair.IsSave(diffSign));
 
     private static IEnumerable<(int prev, int next)> Pairs(this IEnumerable<int> pairs)
     {
