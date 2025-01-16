@@ -1,4 +1,4 @@
-﻿namespace AdventOfCode.Structures;
+﻿namespace AdventOfCode.Extensions;
 
 public static class Helpers
 {
