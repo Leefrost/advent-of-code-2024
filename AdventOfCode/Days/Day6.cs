@@ -1,9 +1,5 @@
 ﻿namespace AdventOfCode.Days;
 
-public static class Directions
-{
-}
-
 public static class Day6
 {
     private const char E = 'E';
@@ -112,7 +108,10 @@ public static class Day6
 
     private static char[][] SubGrid(this char[][] grid, (int row, int col) point)
     {
-        var clone = grid.Select(line => line.ToArray()).ToArray();
+        var clone = grid
+            .Select(line => line.ToArray())
+            .ToArray();
+        
         clone[point.row][point.col] = '#';
         return clone;
     }

@@ -4,6 +4,22 @@ namespace AdventOfCode.Days;
 
 public static class Day7
 {
+    private class Bridge
+    {
+        public Bridge(string line)
+        {
+            var pair = line.Split(": ");
+            Answer = long.Parse(pair[0]);
+            Inputs = pair[1].Split(' ').Select(long.Parse).ToList();
+        }
+
+        private List<long> Inputs { get; }
+        public long Answer { get; }
+
+        public bool IsSolved(List<Func<long, long, long>> reductions)
+            => Inputs.Solve(Answer, reductions);
+    }
+    
     public static long Part1(string input)
     {
         var bridges = File.ReadAllLines(input)
@@ -39,35 +55,18 @@ public static class Day7
 
     private static IEnumerable<List<T>> Reduce<T>(this List<T> list, List<Func<T, T, T>> operation)
     {
-        foreach (var reduce in operation)
-            yield return ((T[]) [reduce(list[0], list[1])])
-                .Concat(list.Skip(2))
-                .ToList();
+        return operation.Select(reduce => ((T[]) [reduce(list[0], list[1])])
+            .Concat(list.Skip(2))
+            .ToList());
     }
 
-    private static bool Solve<T>(this List<T> list, T result, List<Func<T, T, T>> reductions) where T : INumber<T>
+    private static bool Solve<T>(this List<T> list, T result, List<Func<T, T, T>> reductions) 
+        where T : INumber<T>
     {
         if (list.Count > 1)
-            return list.Reduce(reductions).Any(bridge => bridge.Solve(result, reductions));
+            return list.Reduce(reductions)
+                .Any(bridge => bridge.Solve(result, reductions));
 
         return list[0] == result;
-    }
-
-    private class Bridge
-    {
-        public Bridge(string line)
-        {
-            var pair = line.Split(": ");
-            Answer = long.Parse(pair[0]);
-            Inputs = pair[1].Split(' ').Select(long.Parse).ToList();
-        }
-
-        private List<long> Inputs { get; }
-        public long Answer { get; }
-
-        public bool IsSolved(List<Func<long, long, long>> reductions)
-        {
-            return Inputs.Solve(Answer, reductions);
-        }
     }
 }

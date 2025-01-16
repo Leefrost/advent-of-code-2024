@@ -2,14 +2,11 @@
 
 public static class Day5
 {
-    private static readonly Dictionary<int, List<int>> Rules = [];
-    private static readonly List<int[]> Input = [];
-
-    private static readonly Comparer<int>? TopComparer =
-        Comparer<int>.Create((start, end) => Rules[end].Contains(start) ? 1 : -1);
-
     public static int Part1(string input)
     {
+        List<int[]> data = [];
+        Dictionary<int, List<int>> rules = [];
+        
         using var file = File.OpenRead(input);
         using var reader = new StreamReader(file);
         while (!reader.EndOfStream)
@@ -20,26 +17,30 @@ public static class Day5
                 var values = line.Split('|').Select(int.Parse).ToArray();
                 var (start, end) = (values.First(), values.Last());
 
-                Rules.TryAdd(start, []);
-                Rules.TryAdd(end, []);
+                rules.TryAdd(start, []);
+                rules.TryAdd(end, []);
 
-                Rules[start].Add(end);
+                rules[start].Add(end);
             }
 
             if (line is not null && line != string.Empty && line.Contains(','))
             {
                 var values = line.Split(',').Select(int.Parse).ToArray();
-                Input.Add(values);
+                data.Add(values);
             }
         }
 
-        return Input
-            .Where(IsOrderCorrect)
+        return data
+            .Where(row => IsOrderCorrect(row, rules))
             .Sum(row => row[row.Length / 2]);
     }
 
     public static int Part2(string input)
     {
+        List<int[]> data = [];
+        Dictionary<int, List<int>> rules = [];
+        var comparer = Comparer<int>.Create((start, end) => rules[end].Contains(start) ? 1 : -1);
+        
         using var file = File.OpenRead(input);
         using var reader = new StreamReader(file);
         while (!reader.EndOfStream)
@@ -50,27 +51,27 @@ public static class Day5
                 var values = line.Split('|').Select(int.Parse).ToArray();
                 var (start, end) = (values.First(), values.Last());
 
-                Rules.TryAdd(start, []);
-                Rules.TryAdd(end, []);
+                rules.TryAdd(start, []);
+                rules.TryAdd(end, []);
 
-                Rules[start].Add(end);
+                rules[start].Add(end);
             }
 
             if (line is not null && line != string.Empty && line.Contains(','))
             {
                 var values = line.Split(',').Select(int.Parse).ToArray();
-                Input.Add(values);
+                data.Add(values);
             }
         }
 
-        return Input
-            .Where(row => !IsOrderCorrect(row))
-            .Select(row => row.OrderBy(item => item, TopComparer).ToArray())
+        return data
+            .Where(row => !IsOrderCorrect(row, rules))
+            .Select(row => row.OrderBy(item => item, comparer).ToArray())
             .Sum(row => row[row.Length / 2]);
     }
 
-    private static bool IsOrderCorrect(int[] row)
+    private static bool IsOrderCorrect(int[] row, Dictionary<int, List<int>> rules)
     {
-        return row.Zip(row.Skip(1), (start, end) => !Rules[end].Contains(start)).All(s => s);
+        return row.Zip(row.Skip(1), (start, end) => !rules[end].Contains(start)).All(s => s);
     }
 }
