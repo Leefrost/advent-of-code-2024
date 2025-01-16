@@ -1,9 +1,9 @@
 ﻿namespace AdventOfCode.Days;
 
-public record DiskBlock(int Count, int Value);
-
 public static class Day9
 {
+    private record DiskBlock(int Count, int Value);
+
     public static ulong Part1(string input)
     {
         DiskBlock[] blocks = [];

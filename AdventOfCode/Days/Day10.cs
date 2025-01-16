@@ -19,14 +19,10 @@ public static class Day10
     }
 
     private static int Rating(this (int row, int col) point, char[][] map)
-    {
-        return point.WalkOn(map).Where(tuple => map.At(tuple.point) == '9').Sum(valueTuple => valueTuple.count);
-    }
+        => point.WalkOn(map).Where(tuple => map.At(tuple.point) == '9').Sum(valueTuple => valueTuple.count);
 
     private static int Score(this (int row, int col) start, char[][] map)
-    {
-        return start.WalkOn(map).Count(point => map.At(point.point) == '9');
-    }
+        => start.WalkOn(map).Count(point => map.At(point.point) == '9');
 
     private static IEnumerable<((int row, int col) point, int count)> WalkOn(this (int row, int col) start,
         char[][] map)
@@ -56,35 +52,25 @@ public static class Day10
     }
 
     private static IEnumerable<(int row, int col)> GetNeighbours(this char[][] map, (int row, int col) point)
-    {
-        return new[]
+        => new[]
             {
                 (point.row - 1, point.col), (point.row + 1, point.col),
                 (point.row, point.col - 1), (point.row, point.col + 1)
             }
             .Where(neighbour => map.IsUphill(point, neighbour));
-    }
 
     private static bool IsUphill(this char[][] map, (int row, int col) a, (int row, int col) b)
-    {
-        return map.IsOnMap(a) && map.IsOnMap(b) && map.At(b) == map.At(a) + 1;
-    }
+        => map.IsOnMap(a) && map.IsOnMap(b) && map.At(b) == map.At(a) + 1;
 
     private static bool IsOnMap(this char[][] map, (int row, int col) point)
-    {
-        return point is { row: >= 0, col: >= 0 } && point.row < map.Length && point.col < map[point.row].Length;
-    }
+        => point is { row: >= 0, col: >= 0 } && point.row < map.Length && point.col < map[point.row].Length;
 
     private static char At(this char[][] map, (int row, int col) point)
-    {
-        return map[point.row][point.col];
-    }
+        => map[point.row][point.col];
 
     private static IEnumerable<(int row, int col)> GetTrailHeads(this char[][] map)
-    {
-        return from row in Enumerable.Range(0, map.Length)
+        => from row in Enumerable.Range(0, map.Length)
             from col in Enumerable.Range(0, map[0].Length)
             where map[row][col] == '0'
             select (row, col);
-    }
 }
