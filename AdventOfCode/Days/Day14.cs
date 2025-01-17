@@ -1,17 +1,19 @@
 ﻿using System.Text.RegularExpressions;
+using AdventOfCode.Extensions;
+using AdventOfCode.Structures;
 
 namespace AdventOfCode.Days;
 
 public static class Day14
 {
-    private static readonly Regex Parsing =
+    private static readonly Regex Row =
         new(@"p=(?<px>-?\d+),(?<py>-?\d+) v=(?<vx>-?\d+),(?<vy>-?\d+)");
 
     public static long Part1(string input)
     {
         var lines = File.ReadAllText(input);
 
-        var robots = Parsing.Matches(lines).Select(match =>
+        var robots = Row.Matches(lines).Select(match =>
             new Robot(
                 new Vector2(ToInt(match, "px"), ToInt(match, "py")),
                 new Vector2(ToInt(match, "vx"), ToInt(match, "vy"))
@@ -30,6 +32,7 @@ public static class Day14
         };
 
         Prediction(size, 100, robots, predictions);
+        
         var result = blocks
             .Select(block => predictions
                 .Count(p => p.X >= block.Start.X && p.X < block.End.X && p.Y >= block.Start.Y && p.Y < block.End.Y))
@@ -41,7 +44,7 @@ public static class Day14
     {
         var lines = File.ReadAllText(input);
 
-        var robots = Parsing.Matches(lines).Select(match =>
+        var robots = Row.Matches(lines).Select(match =>
             new Robot(
                 new Vector2(ToInt(match, "px"), ToInt(match, "py")),
                 new Vector2(ToInt(match, "vx"), ToInt(match, "vy"))
@@ -61,18 +64,7 @@ public static class Day14
         var result = vx + Mod(ModInv(size.X, size.Y) * (vy - vx), size.Y) * size.X;
         return result;
     }
-
-    private static int IndexOfMin<T, TV>(this T[] source, Func<T, TV> selector)
-        where TV : IComparable<TV>
-    {
-        var min = 0;
-        for (var i = 1; i < source.Length; i++)
-            if (selector(source[i]).CompareTo(selector(source[min])) < 0)
-                min = i;
-
-        return min;
-    }
-
+    
     private static (double x, double y) Variance(Vector2[] points)
     {
         var n = points.Length;
@@ -98,9 +90,7 @@ public static class Day14
     }
 
     private static int Mod(int n, int m)
-    {
-        return (n % m + m) % m;
-    }
+        => (n % m + m) % m;
 
     private static int ModInv(int n, int m)
     {
@@ -118,25 +108,8 @@ public static class Day14
     }
 
     private static int ToInt(Match match, string group)
-    {
-        return Convert.ToInt32(match.Groups[group].Value);
-    }
-
-    private record struct Vector2(int X, int Y)
-    {
-        public static Vector2 Zero => new(0, 0);
-
-        public static Vector2 operator -(Vector2 a, Vector2 b)
-        {
-            return new Vector2(a.X - b.X, a.Y - b.Y);
-        }
-
-        public static Vector2 operator +(Vector2 a, Vector2 b)
-        {
-            return new Vector2(a.X + b.X, a.Y + b.Y);
-        }
-    }
-
+        => Convert.ToInt32(match.Groups[group].Value);
+    
     private record Robot(Vector2 Position, Vector2 Velocity);
 
     private record Block(Vector2 Start, Vector2 End);

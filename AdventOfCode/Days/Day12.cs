@@ -70,15 +70,15 @@ public static class Day12
     {
         var result = new int[grid.Length][];
         for (var i = 0; i < result.Length; i++) result[i] = new int[grid[0].Length];
-        var regionId = 1;
-        for (var r = 0; r < grid.Length; r++)
-        for (var c = 0; c < grid[r].Length; c++)
-        {
-            if (result[r][c] != 0) continue;
-            result[r][c] = regionId;
-            CheckNeighbours(grid[r][c], regionId, grid, result, r, c);
-            regionId++;
-        }
+            var regionId = 1;
+            for (var r = 0; r < grid.Length; r++)
+                for (var c = 0; c < grid[r].Length; c++)
+                {
+                    if (result[r][c] != 0) continue;
+                    result[r][c] = regionId;
+                    CheckNeighbours(grid[r][c], regionId, grid, result, r, c);
+                    regionId++;
+                }
 
         return result;
     }
@@ -88,10 +88,14 @@ public static class Day12
         var nw = grid.At(row - 1, col - 1) == grid.At(row, col);
         var w = grid.At(row, col - 1) == grid.At(row, col);
         var n = grid.At(row - 1, col) == grid.At(row, col);
-        if (w && n && !nw) return '┛';
-        if (w && !n) return grid.Top(row, col);
-        if (n && !w) return grid.Left(row, col);
-        if (w && n && nw) return ' ';
+        if (w && n && !nw) 
+            return '┛';
+        if (w && !n) 
+            return grid.Top(row, col);
+        if (n && !w) 
+            return grid.Left(row, col);
+        if (w && n && nw) 
+            return ' ';
         return '┏';
     }
 
@@ -100,10 +104,14 @@ public static class Day12
         var ne = grid.At(row - 1, col + 1) == grid.At(row, col);
         var e = grid.At(row, col + 1) == grid.At(row, col);
         var n = grid.At(row - 1, col) == grid.At(row, col);
-        if (e && n && !ne) return '┗';
-        if (n && !e) return grid.Right(row, col);
-        if (e && !n) return grid.Top(row, col);
-        if (e && n && ne) return ' ';
+        if (e && n && !ne) 
+            return '┗';
+        if (n && !e) 
+            return grid.Right(row, col);
+        if (e && !n) 
+            return grid.Top(row, col);
+        if (e && n && ne) 
+            return ' ';
         return '┓';
     }
 
@@ -112,10 +120,14 @@ public static class Day12
         var sw = grid.At(row + 1, col - 1) == grid.At(row, col);
         var w = grid.At(row, col - 1) == grid.At(row, col);
         var s = grid.At(row + 1, col) == grid.At(row, col);
-        if (w && s && !sw) return '┓';
-        if (s && !w) return grid.Left(row, col);
-        if (w && !s) return grid.Bottom(row, col);
-        if (w && s && sw) return ' ';
+        if (w && s && !sw) 
+            return '┓';
+        if (s && !w) 
+            return grid.Left(row, col);
+        if (w && !s) 
+            return grid.Bottom(row, col);
+        if (w && s && sw) 
+            return ' ';
         return '┗';
     }
 
@@ -124,38 +136,37 @@ public static class Day12
         var se = grid.At(row + 1, col + 1) == grid.At(row, col);
         var e = grid.At(row, col + 1) == grid.At(row, col);
         var s = grid.At(row + 1, col) == grid.At(row, col);
-        if (e && s && !se) return '┏';
-        if (e && !s) return grid.Bottom(row, col);
-        if (s && !e) return grid.Right(row, col);
-        if (s && e && se) return ' ';
+        if (e && s && !se) 
+            return '┏';
+        if (e && !s) 
+            return grid.Bottom(row, col);
+        if (s && !e) 
+            return grid.Right(row, col);
+        if (s && e && se) 
+            return ' ';
         return '┛';
     }
 
     private static char Left(this int[][] grid, int row, int col)
-    {
-        return grid.At(row, col - 1) == grid.At(row, col) ? ' ' : '┃';
-    }
+        => grid.At(row, col - 1) == grid.At(row, col) ? ' ' : '┃';
 
     private static char Right(this int[][] grid, int row, int col)
-    {
-        return grid.At(row, col + 1) == grid.At(row, col) ? ' ' : '┃';
-    }
+        => grid.At(row, col + 1) == grid.At(row, col) ? ' ' : '┃';
 
     private static char Top(this int[][] grid, int row, int col)
-    {
-        return grid.At(row - 1, col) == grid.At(row, col) ? ' ' : '━';
-    }
+        => grid.At(row - 1, col) == grid.At(row, col) ? ' ' : '━';
 
     private static char Bottom(this int[][] grid, int row, int col)
-    {
-        return grid.At(row + 1, col) == grid.At(row, col) ? ' ' : '━';
-    }
+        => grid.At(row + 1, col) == grid.At(row, col) ? ' ' : '━';
 
     private static int At(this int[][] grid, int row, int col)
     {
-        if (row < 0) return 0;
-        if (col < 0) return 0;
-        if (row >= grid.Length) return 0;
+        if (row < 0) 
+            return 0;
+        if (col < 0) 
+            return 0;
+        if (row >= grid.Length) 
+            return 0;
         return col >= grid[row].Length ? 0 : grid[row][col];
     }
 
@@ -192,10 +203,11 @@ public static class Day12
 
     private static int[][] MapPerimeters(this char[][] grid)
     {
-        var result = grid.Select(row => row.Select(_ => 0).ToArray()).ToArray();
+        var result = grid
+            .Select(row => row.Select(_ => 0).ToArray()).ToArray();
         for (var row = 0; row < grid.Length; row++)
-        for (var col = 0; col < grid[row].Length; col++)
-            result[row][col] = grid.Perimeter(row, col);
+            for (var col = 0; col < grid[row].Length; col++)
+                result[row][col] = grid.Perimeter(row, col);
 
         return result;
     }
@@ -204,10 +216,14 @@ public static class Day12
     {
         var p = 0;
         var me = grid[row][col];
-        if (row == 0 || grid[row - 1][col] != me) p++;
-        if (col == 0 || grid[row][col - 1] != me) p++;
-        if (row == grid.Length - 1 || grid[row + 1][col] != me) p++;
-        if (col == grid[row].Length - 1 || grid[row][col + 1] != me) p++;
+        if (row == 0 || grid[row - 1][col] != me) 
+            p++;
+        if (col == 0 || grid[row][col - 1] != me) 
+            p++;
+        if (row == grid.Length - 1 || grid[row + 1][col] != me) 
+            p++;
+        if (col == grid[row].Length - 1 || grid[row][col + 1] != me) 
+            p++;
         return p;
     }
 }
