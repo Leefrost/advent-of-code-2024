@@ -73,7 +73,8 @@ public static class Day15
     private static int TryMove(Map2<char> map, int location, int ddx)
     {
         var next = map.Next(location, ddx);
-        if (map[location] == Border || !CanMove(map, location, ddx, [])) return location;
+        if (map[location] == Border || !CanMove(map, location, ddx, [])) 
+            return location;
 
         Move(map, location, ddx, []);
         return next;
@@ -125,8 +126,7 @@ public static class Day15
     }
 
     private static IEnumerable<char> WideChar(char symbol)
-    {
-        return symbol switch
+        => symbol switch
         {
             Border => [Border, Border],
             Box => [BoxLeft, BoxRight],
@@ -134,11 +134,9 @@ public static class Day15
             Robot => [Robot, Empty],
             _ => throw new NotImplementedException()
         };
-    }
 
     private static int Ch2D(char symbol)
-    {
-        return symbol switch
+        => symbol switch
         {
             '^' => 0,
             '>' => 1,
@@ -146,7 +144,6 @@ public static class Day15
             '<' => 3,
             _ => -1
         };
-    }
 
     private static int Distance(Map2<char> map, int location)
     {

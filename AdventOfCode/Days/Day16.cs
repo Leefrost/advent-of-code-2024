@@ -11,6 +11,8 @@ public static class Day16
 
     private const int Forward = 1;
     private const int Rotate = 1000;
+    
+    private record Node(int Location, int Direction, int Distance);
 
     public static int Part1(string input)
     {
@@ -133,12 +135,6 @@ public static class Day16
             .ToArray();
     }
 
-
-
     private static int Mod(int n, int m)
-    {
-        return (n % m + m) % m;
-    }
-
-    private record Node(int Location, int Direction, int Distance);
+        => (n % m + m) % m;
 }

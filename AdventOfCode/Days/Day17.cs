@@ -8,6 +8,20 @@ public static class Day17
     private const int B = 1;
     private const int C = 2;
     private static readonly Regex NumRegex = new(@"\d+");
+    
+    private delegate void Instruction(long a, long b, ref long output);
+
+    private enum Code
+    {
+        ADV = 0,
+        BXL = 1,
+        BST = 2,
+        JNZ = 3,
+        BXC = 4,
+        OUT = 5,
+        BDV = 6,
+        CDV = 7
+    }
 
     public static string Part1(string input)
     {
@@ -34,8 +48,6 @@ public static class Day17
     public static long Part2(string input)
     {
         const int programIndex = 4;
-        const int numberOfRegisters = 3;
-
         var lines = File.ReadAllLines(input);
 
         var program = NumRegex.Matches(lines[programIndex])
@@ -124,19 +136,5 @@ public static class Day17
     private static long Combo(long[] r, int n)
     {
         return n >= 4 ? r[n - 4] : n;
-    }
-
-    private delegate void Instruction(long a, long b, ref long output);
-
-    private enum Code
-    {
-        ADV = 0,
-        BXL = 1,
-        BST = 2,
-        JNZ = 3,
-        BXC = 4,
-        OUT = 5,
-        BDV = 6,
-        CDV = 7
     }
 }
