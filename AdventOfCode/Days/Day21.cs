@@ -44,15 +44,11 @@ public static class Day21
     }
 
     private static ulong BigSum<T>(this IEnumerable<T> source, Func<T, ulong> func)
-    {
-        return source.Aggregate(0UL, (acc, n) => acc + func(n));
-    }
+        => source.Aggregate(0UL, (acc, n) => acc + func(n));
 
     private static ulong SolveNumeric(string code, int depth)
-    {
-        return Convert.ToUInt64(code[..^1]) * AssembleSequence(_keyboard, code)
+        => Convert.ToUInt64(code[..^1]) * AssembleSequence(_keyboard, code)
             .BigSum(ins => SolveDirectional(ins, depth));
-    }
 
     private static ulong SolveDirectional(string code, int depth)
     {
@@ -67,14 +63,7 @@ public static class Day21
         return Cache.AddAndReturn(tuple, AssembleSequence(_robotKeyboard, code)
             .BigSum(ins => SolveDirectional(ins, depth - 1)));
     }
-
-    private static TValue AddAndReturn<TKey, TValue>(this Dictionary<TKey, TValue> source, TKey key, TValue value)
-        where TKey : notnull
-    {
-        source.Add(key, value);
-        return value;
-    }
-
+    
     private static IEnumerable<string> AssembleSequence(Map2<char> keyboard, string code)
     {
         var location = Array.IndexOf(keyboard.Data, Enter);
@@ -174,17 +163,15 @@ public static class Day21
     }
 
     private static int Ddx2W(int ddx)
-    {
-        return ddx switch
+        => ddx switch
         {
             0 => 2,
             1 => 4,
             2 => 3,
             3 => 1,
 
-            _ => throw new NotImplementedException()
+            _ => -1
         };
-    }
 
     private static char Ddx2C(int dir)
     {
@@ -195,7 +182,7 @@ public static class Day21
             2 => 'v',
             3 => '<',
 
-            _ => throw new NotImplementedException()
+            _ => '0'
         };
     }
 }

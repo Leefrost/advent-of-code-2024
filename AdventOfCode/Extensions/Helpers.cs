@@ -2,6 +2,14 @@
 
 public static class Helpers
 {
+    
+    public static TValue AddAndReturn<TKey, TValue>(this Dictionary<TKey, TValue> source, TKey key, TValue value)
+        where TKey : notnull
+    {
+        source.Add(key, value);
+        return value;
+    }
+    
     public static IEnumerable<T> Each<T>(this IEnumerable<T> source, Action<T> action)
     {
         foreach (var item in source)

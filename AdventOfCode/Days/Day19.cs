@@ -34,24 +34,18 @@ public static class Day19
     }
 
     private static T[][] GetTokens<T>(string input, string separator, Func<string, T> converter)
-    {
-        return File.ReadAllLines(input).Select(line => line.Split(separator, StringSplitOptions.RemoveEmptyEntries)
+        => File.ReadAllLines(input).Select(line => line.Split(separator, StringSplitOptions.RemoveEmptyEntries)
                 .Select(t => converter(t.Trim()))
                 .ToArray())
             .ToArray();
-    }
 
     private static ulong DesignCombinations(string pattern, ConcurrentDictionary<string, ulong> cache,
         HashSet<string> towels)
-    {
-        return cache.TryGetValue(pattern, out var value)
+        => cache.TryGetValue(pattern, out var value)
             ? value
             : cache.GetOrAdd(pattern,
                 towels.Where(pattern.StartsWith).BigSum(t => DesignCombinations(pattern[t.Length..], cache, towels)));
-    }
 
     private static ulong BigSum<T>(this IEnumerable<T> source, Func<T, ulong> func)
-    {
-        return source.Aggregate(0UL, (acc, n) => acc + func(n));
-    }
+        => source.Aggregate(0UL, (acc, n) => acc + func(n));
 }

@@ -1,19 +1,7 @@
-﻿using AdventOfCode.Structures;
+﻿using AdventOfCode.Extensions;
+using AdventOfCode.Structures;
 
 namespace AdventOfCode.Days;
-
-public record struct Vec2(int X, int Y)
-{
-    public static Vec2 operator -(Vec2 a, Vec2 b)
-    {
-        return new Vec2(a.X - b.X, a.Y - b.Y);
-    }
-
-    public static Vec2 operator +(Vec2 a, Vec2 b)
-    {
-        return new Vec2(a.X + b.X, a.Y + b.Y);
-    }
-}
 
 public static class Day18
 {
@@ -26,7 +14,7 @@ public static class Day18
                 return (int.Parse(coords[0]), int.Parse(coords[1]));
             }).ToArray();
 
-        var (map, start, end) = CreateMap(new Vec2(71, 71));
+        var (map, start, end) = CreateMap(new Vector2(71, 71));
         CorruptMap(map, 1024, obstructions);
 
         var result = FindPath(map, start, end, map.CreateBuffer<int>());
@@ -42,7 +30,7 @@ public static class Day18
                 return (int.Parse(coords[0]), int.Parse(coords[1]));
             }).ToArray();
 
-        var (map, start, end) = CreateMap(new Vec2(71, 71));
+        var (map, start, end) = CreateMap(new Vector2(71, 71));
         var buffer = map.CreateBuffer<int>();
 
         var (head, tail) = (1024 + 1, obstructions.Length);
@@ -78,10 +66,8 @@ public static class Day18
             if (current == end)
                 return distances[current];
 
-            if (map[current] == '#' || visited.Contains(current))
+            if (map[current] == '#' || !visited.Add(current))
                 continue;
-
-            visited.Add(current);
 
             Array.ForEach(map.Directions, d =>
             {
@@ -108,11 +94,9 @@ public static class Day18
     }
 
     private static void CorruptMap(Map2<char> map, int steps, (int x, int y)[] obstructions)
-    {
-        obstructions.Take(steps).Each(p => map[p.x + 1, p.y + 1] = '#');
-    }
+        => obstructions.Take(steps).Each(p => map[p.x + 1, p.y + 1] = '#');
 
-    private static (Map2<char> map, int start, int end) CreateMap(Vec2 size)
+    private static (Map2<char> map, int start, int end) CreateMap(Vector2 size)
     {
         var map = new Map2<char>(new char[(size.X + 2) * (size.Y + 2)], size.X + 2);
 
@@ -123,13 +107,5 @@ public static class Day18
         var end = map.D2toD1(size.X, size.Y);
 
         return (map, start, end);
-    }
-
-    private static IEnumerable<T> Each<T>(this IEnumerable<T> source, Action<T> action)
-    {
-        foreach (var item in source)
-            action(item);
-
-        return source;
     }
 }
