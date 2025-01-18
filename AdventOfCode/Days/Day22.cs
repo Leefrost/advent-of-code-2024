@@ -31,7 +31,7 @@ public static class Day22
         var sums = new ConcurrentDictionary<int, long>();
         _numbers
             .AsParallel()
-            .ForAll(n => CalculateSeqs(n, Iterations, sums));  
+            .ForAll(n => CalculateSequences(n, Iterations, sums));  
         
         var result = sums.Values.AsParallel().Max().ToString();
         return result;
@@ -45,7 +45,7 @@ public static class Day22
         return secret;
     }
     
-    private static void CalculateSeqs(long secret, long iterations, ConcurrentDictionary<int, long> sums)
+    private static void CalculateSequences(long secret, long iterations, ConcurrentDictionary<int, long> sums)
     {
         var added = new HashSet<int>();
         iterations -= SeqSize;
@@ -53,26 +53,27 @@ public static class Day22
         var seq = 0;                
         var prev = 0L;
 
-        void update()
-        {
-            var digit = secret % Base10;
-            seq = (seq << 8) + (byte)(digit - prev + Base10);
-            secret = NextSecret(secret);
-            prev = digit;
-        }
-        
         for (int i = 0; i < SeqSize; i++)        
-            update();
+            Update();
 
         for (int i = 0; i < iterations; i++)
         {
-            update();
+            Update();
 
             if (!added.Contains(seq))
             {
                 sums.AddOrUpdate(seq, prev, (_, v) => v + prev);
                 added.Add(seq);
             }
+        }
+        return;
+
+        void Update()
+        {
+            var digit = secret % Base10;
+            seq = (seq << 8) + (byte)(digit - prev + Base10);
+            secret = NextSecret(secret);
+            prev = digit;
         }
     }
     
@@ -85,5 +86,4 @@ public static class Day22
 
     private static long MixAndPrune(long secret, long num)
         => (secret ^ num) % Mod;
-
 }

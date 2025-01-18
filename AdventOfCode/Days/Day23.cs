@@ -1,32 +1,30 @@
 ﻿using AdventOfCode.Extensions;
-using AdventOfCode.Structures;
 
 namespace AdventOfCode.Days;
 
 public static class Day23
 {
     private const int T = 't' - 'a';
-    private static readonly Dictionary<int, HashSet<int>> _graph = [];
+    private static readonly Dictionary<int, HashSet<int>> Graph = [];
 
     public static int Part1(string input)
     {
         var lines = File.ReadAllLines(input)
-            .Select(line => line.Split('-')
-                .Select(t => t.Trim()).ToArray()
-            ).ToArray();
+            .Select(line => line.Split('-').Select(t => t.Trim())
+                .ToArray()).ToArray();
 
         foreach (var (v1, v2) in lines.Select(t => (V2I(t[0]), V2I(t[1]))))
         {
-            _graph.TryAdd(v1, []);
-            _graph[v1].Add(v2);
+            Graph.TryAdd(v1, []);
+            Graph[v1].Add(v2);
 
-            _graph.TryAdd(v2, []);
-            _graph[v2].Add(v1);
+            Graph.TryAdd(v2, []);
+            Graph[v2].Add(v1);
         }
 
         HashSet<int> paths = [];
 
-        _graph.Keys.Where(k => StartsWith(k, T))
+        Graph.Keys.Where(k => StartsWith(k, T))
             .Each(k => paths.UnionWith(FindSet(k)));
 
         return paths.Count;
@@ -41,15 +39,14 @@ public static class Day23
 
         foreach (var (v1, v2) in lines.Select(t => (V2I(t[0]), V2I(t[1]))))
         {
-            _graph.TryAdd(v1, []);
-            _graph[v1].Add(v2);
+            Graph.TryAdd(v1, []);
+            Graph[v1].Add(v2);
 
-            _graph.TryAdd(v2, []);
-            _graph[v2].Add(v1);
+            Graph.TryAdd(v2, []);
+            Graph[v2].Add(v1);
         }
 
-        var result = string.Join(",", Cliques(_graph)
-            .MaxBy(c => c.Count).Select(I2V).OrderBy(x => x));
+        var result = string.Join(",", Cliques(Graph).MaxBy(c => c.Count)!.Select(I2V).OrderBy(x => x));
         return result;
     }
 
@@ -57,10 +54,10 @@ public static class Day23
     {
         HashSet<int> list = [];
 
-        foreach (var lvl1 in _graph[v])
-        foreach (var lvl2 in _graph[lvl1])
-        foreach (var lvl3 in _graph[lvl2].Where(c => c == v))
-            list.Add(ToSet(v, lvl1, lvl2));
+        foreach (var lvl1 in Graph[v])
+            foreach (var lvl2 in Graph[lvl1])
+                foreach (var lvl3 in Graph[lvl2].Where(c => c == v))
+                    list.Add(ToSet(v, lvl1, lvl2));
 
         return list;
     }
@@ -98,9 +95,7 @@ public static class Day23
     }
 
     private static int NonNeighborsVertex(HashSet<int> p, HashSet<int> x, Dictionary<int, HashSet<int>> graph)
-    {
-        return p.Union(x).OrderByDescending(v => graph[v].Count).First();
-    }
+        => p.Union(x).OrderByDescending(v => graph[v].Count).First();
 
     private static int ToSet(int v1, int v2, int v3)
     {
@@ -109,19 +104,13 @@ public static class Day23
     }
 
     private static int V2I(string s)
-    {
-        return (s[0] - 'a' << 5) + (s[1] - 'a');
-    }
+        => (s[0] - 'a' << 5) + (s[1] - 'a');
 
     private static string I2V(int id)
-    {
-        return new string([(char)((id >> 5) + 'a'), (char)((id & 31) + 'a')]);
-    }
+        => new([(char)((id >> 5) + 'a'), (char)((id & 31) + 'a')]);
 
     private static bool StartsWith(int v, int target)
-    {
-        return v >> 5 == target;
-    }
+        => v >> 5 == target;
 
     private static void Sort2(ref int a, ref int b)
     {

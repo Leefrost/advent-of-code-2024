@@ -1,13 +1,11 @@
 ﻿using AdventOfCode.Extensions;
-using AdventOfCode.Structures;
 
 namespace AdventOfCode.Days;
 
 public static class Day25
 {
-
-    private const int WIDTH = 5;
-    private const char FILL = '#';
+    private const int Width = 5;
+    private const char Fill = '#';
 
     private static int[][] _locks = [];
     private static int[][] _keys = [];
@@ -19,7 +17,7 @@ public static class Day25
         List<int[]> keys = [];
         List<int[]> locks = [];
 
-        var temp = new int[WIDTH];
+        var temp = new int[Width];
         bool? isKey = null;
 
         for (var i = 0; i <= lines.Length; i++)
@@ -41,8 +39,8 @@ public static class Day25
                 continue;
             }
 
-            lines[i].Select(c => c == FILL ? 1 : 0)
-                .Select((d, i) => (d, i))
+            lines[i].Select(c => c == Fill ? 1 : 0)
+                .Select((d, index) => (d, i: index))
                 .Each(d => temp[d.i] += d.d);
 
             isKey ??= temp.Sum() > 0;
@@ -56,12 +54,8 @@ public static class Day25
     }
 
     public static int Part2(string input)
-    {
-        return 0;
-    }
+        => 0;
 
     private static bool IsFit(int[] a, int[] b)
-    {
-        return a.Zip(b, (ai, bi) => ai + bi).All(d => d <= 7);
-    }
+        => a.Zip(b, (ai, bi) => ai + bi).All(d => d <= 7);
 }
